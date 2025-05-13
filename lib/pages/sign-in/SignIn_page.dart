@@ -3,170 +3,187 @@ import 'package:get/get.dart';
 import 'package:quiz_proyect/pages/sign-in/SignIn_controller.dart';
 
 class SignInPage extends StatelessWidget {
+  SignInController control = Get.put(SignInController());
 
   SignInPage({super.key});
 
-  SignInController controller = Get.put(SignInController());
-
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
   Widget _form(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      padding: EdgeInsets.all(15),
+      width: MediaQuery.of(context).size.width * 0.7,
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primaryFixed,
-          shape: BoxShape.rectangle,
           border: Border.all(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              width: 10
-          )
+              color: Theme.of(context).colorScheme.onSecondaryFixedVariant,
+              width: 2.0)
       ),
-      child: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text("INGRESA ESTA INFORMACIÓN"),
-            SizedBox(
-              height: 10,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(
+              top: 0, // Padding superior
+              bottom: 0, // Padding inferior
+              left: 25, // Padding izquierdo
+              right: 25, // Padding derecho
             ),
-            TextField(
-                controller: usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Usuario',
-                  hintText: 'Ingresa tu nombre de usuario',
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  prefixIcon: Icon(Icons.person),
-                  border: OutlineInputBorder(),
-                )
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            TextField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Contraseña',
-                  hintText: 'Ingresa tu contraseña',
-                  prefixIcon:
-                  Icon(Icons.lock),
-                  border: OutlineInputBorder(),
-                )
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                    backgroundColor: Colors.white,
-                    minimumSize: Size(double.infinity, 50)
-                ),
-                child: Text("Sign in"),
-                onPressed: () {
-                  usernameController.clear();
-                  passwordController.clear();
-                }
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row (
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Column(
               children: [
-                Text("No tienes cuenta? "),
-                GestureDetector(
-                  onTap: () {
-
+                const Text('Ingresa Esta Información'),
+                TextField(
+                  controller: control.txtUser,
+                  decoration: const InputDecoration(
+                    labelText: 'Usuario',
+                    hintText: 'Usuario',
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    prefixIcon: Icon(
+                        Icons.person), // Aquí agregamos el ícono de usuario
+                    //border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                TextField(
+                  obscureText: true,
+                  controller:
+                      control.txtPassword, // Esto oculta el texto ingresado
+                  decoration: InputDecoration(
+                    hintText: 'Contraseña',
+                    prefixIcon: Icon(Icons.lock), // Ícono de candado
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Acción del botón
+                    print(':)');
+                    control.signIn(context);
                   },
-                  child: Text(
-                    "Creala aquí",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrangeAccent
+                  style: ElevatedButton.styleFrom(
+                    minimumSize:
+                        const Size(double.infinity, 40), // 100% del ancho
+                    backgroundColor:
+                        const Color(0xFFFF7F2A), // Color de fondo personalizado
+                    foregroundColor: Colors.white, // Color del texto blanco
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.zero, // Sin redondeo en las esquinas
                     ),
                   ),
+                  child: const Text('INGRESAR'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Obx(() => control.message.value != null ?
+            Column(
+              children: [
+                Text(control.message.value,
+                  style: TextStyle(
+                    color: control.messageColor.value
+                  )
                 )
               ],
-            )
-          ],
-        ),
+            ) : SizedBox(height: 8)
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('No tienes una cuenta, '),
+              GestureDetector(
+                onTap: () {
+                  control.go_to_signup(context);
+                },
+                child: Text(
+                  'creala aquí',
+                  style: TextStyle(
+                    fontWeight:
+                        FontWeight.bold, // Esto hace que el texto sea en negrita
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _layer1(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 100,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 200,
-                width: 200,
+        child: Column(
+      children: [
+        const SizedBox(
+          height: 50,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+                height: 150,
+                width: 150,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryFixed,
-                  shape: BoxShape.circle,
-                  border: Border.all(
                     color: Theme.of(context).colorScheme.primaryFixed,
-                    width: 10
-                  )
-                ),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.primaryFixed,
+                        width: 10.0)),
                 child: ClipOval(
-                  child: Image.asset('assets/imgs/sebastian.jpg'),
+                  child: Image.asset('assets/imgs/sebastian.jpg',
+                      fit: BoxFit.cover),
+                )),
+          ],
+        ),
+        const SizedBox(
+          height: 40,
+        ),
+        _form(context)
+      ],
+    ));
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+            top: 0, // Coloca el widget en la parte inferior
+            left: 0, // Alinea al inicio del eje horizontal
+            right: 0, // Alinea al final del eje horizontal
+            child: _layer1(context)),
+        const Positioned(
+          bottom: 40, // Coloca el widget a 40 píxeles del fondo
+          left: 0, // Alinea al inicio del eje horizontal
+          right: 0, // Alinea al final del eje horizontal
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido
+            children: [
+              Text('Olvidaste tu contraseña?, '),
+              Text(
+                'recupérala aquí',
+                style: TextStyle(
+                  fontWeight:
+                      FontWeight.bold, // Hace que el texto sea en negrita
                 ),
               ),
             ],
           ),
-          SizedBox(
-            height: 10,
-          ),
-          _form(context),
-          Spacer(),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Row (
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("Olvidaste tu contraseña? "),
-                  GestureDetector(
-                    onTap: () {
-
-                    },
-                    child: Text(
-                      "Recuperala aquí",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepOrangeAccent
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          )
-        ],
-      )
-      );
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: null,
-          body: _buildBody(context)
-      )
+        resizeToAvoidBottomInset: false,
+        appBar: null,
+        body: _buildBody(context))
     );
   }
 }
